@@ -30,6 +30,7 @@ const initForm = {
 const SignIn = ({navigation}) => {
   const [form, setForm] = useState(initForm);
   const [isLoading, setIsLoading] = useState(false);
+  const [isUser, setIsUser] = useState(true);
 
   const handleLogin = async () => {
     setIsLoading(true);
@@ -48,7 +49,11 @@ const SignIn = ({navigation}) => {
 
     setIsLoading(false);
     setForm(initForm);
-    navigation.navigate('Home', {data: res.data});
+    if (isUser) {
+      navigation.navigate('Home', {data: res.data});
+    } else {
+      navigation.navigate('HomeWali', {data: res.data});
+    }
   };
 
   return (
@@ -69,6 +74,24 @@ const SignIn = ({navigation}) => {
           </View>
         );
       })}
+      <View style={styles.radioRow}>
+        <View style={styles.radioContainer}>
+          <TouchableOpacity
+            onPress={() => setIsUser(true)}
+            style={styles.radioButton}>
+            {isUser ? <View style={styles.selected} /> : <View />}
+          </TouchableOpacity>
+          <Text style={[styles.textButton, {paddingLeft: 10}]}>User</Text>
+        </View>
+        <View style={styles.radioContainer}>
+          <TouchableOpacity
+            onPress={() => setIsUser(false)}
+            style={styles.radioButton}>
+            {!isUser ? <View style={styles.selected} /> : <View />}
+          </TouchableOpacity>
+          <Text style={[styles.textButton, {paddingLeft: 10}]}>Non User</Text>
+        </View>
+      </View>
       <TouchableOpacity onPress={() => handleLogin()} style={styles.button}>
         <Text style={styles.textButton}>
           {isLoading ? 'LOADING' : 'SIGN IN'}
@@ -135,5 +158,33 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     paddingTop: 10,
     color: '#fff',
+  },
+  radioRow: {
+    display: 'flex',
+    flexDirection: 'row',
+    marginVertical: 20,
+    minWidth: DEVICE.width / 2,
+    justifyContent: 'space-between',
+  },
+  radioContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  radioButton: {
+    height: 24,
+    width: 24,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  selected: {
+    height: 12,
+    width: 12,
+    borderRadius: 6,
+    backgroundColor: '#fff',
   },
 });

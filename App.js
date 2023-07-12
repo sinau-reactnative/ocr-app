@@ -6,18 +6,8 @@
  * @flow strict-local
  */
 
-import React, {useEffect, useState} from 'react';
-import {
-  SafeAreaView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  View,
-  Dimensions,
-  TouchableOpacity,
-  Image,
-  TextInput,
-} from 'react-native';
+import React from 'react';
+import {StatusBar, StyleSheet, Dimensions} from 'react-native';
 // import database from '@react-native-firebase/database';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
@@ -27,18 +17,13 @@ import SignUp from './pages/SignUp';
 import SignIn from './pages/SignIn';
 import Home from './pages/Home';
 import Result from './pages/Result';
+import HomeWali from './pages/HomeWali';
 
 const DEVICE = Dimensions.get('window');
 const Stack = createNativeStackNavigator();
 
 const App = () => {
   // const reference = database().ref('/apel');
-
-  const [isEditMode, setIsEditMode] = useState(true);
-  const [menu, setMenu] = useState('splash');
-  const [src, setSrc] = useState();
-  const [data, setData] = useState({});
-
   // const handleChangePage = from => {
   //   setSrc(from);
   //   setMenu('about');
@@ -93,6 +78,7 @@ const App = () => {
             name="Result"
             component={Result}
           />
+          <Stack.Screen name="HomeWali" component={HomeWali} />
         </Stack.Navigator>
       </NavigationContainer>
     </>

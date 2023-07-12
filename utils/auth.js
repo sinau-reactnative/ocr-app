@@ -1,7 +1,7 @@
 import firestore from '@react-native-firebase/firestore';
 import moment from 'moment';
 
-const authRef = firestore()
+export const authRef = firestore()
   .collection('tahap1')
   .doc('ocrapp')
   .collection('users');
@@ -38,6 +38,23 @@ export const register = async data => {
     })
     .then(() => {
       return {error: false, msg: 'Akun berhasil dibuat', data: []};
+    })
+    .catch(err => {
+      return {error: true, msg: err, data: []};
+    });
+};
+
+export const updateEmergency = async data => {
+  return await authRef
+    .doc(data.id)
+    .update({
+      isPanic: data.isPanic,
+      latitude: data.latitude,
+      longitude: data.longitude,
+      updated_at: moment().format('YYYY-MM-DD'),
+    })
+    .then(() => {
+      return {error: false, msg: 'User is Panic', data: []};
     })
     .catch(err => {
       return {error: true, msg: err, data: []};
