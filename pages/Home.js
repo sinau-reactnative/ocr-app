@@ -186,22 +186,6 @@ const Home = ({route, navigation}) => {
               />
             </View>
           </View>
-          {/* <TouchableOpacity
-            onPress={async () => {
-              if (isStarted) {
-                stopRecognizing();
-              } else {
-                await speakStarted();
-                setTimeout(() => {
-                  startRecognizing();
-                }, 1500);
-              }
-            }}
-            style={styles.button}>
-            <Text style={styles.textButton}>
-              {isStarted ? 'STOP' : 'START'} LISTENING
-            </Text>
-          </TouchableOpacity> */}
         </View>
         <View style={[{backgroundColor: 'transparent', marginTop: 20}]}>
           <Text style={styles.text}>Getting Started Here</Text>
@@ -226,6 +210,7 @@ const Home = ({route, navigation}) => {
                 {isStarted ? 'Stop' : 'Start'} Listening
               </Text>
             </TouchableOpacity>
+
             <TouchableOpacity onPress={() => openCamera()} style={styles.card}>
               <Image
                 source={require('../assets/camera_white.png')}
@@ -233,6 +218,7 @@ const Home = ({route, navigation}) => {
               />
               <Text style={{fontWeight: 'bold'}}>Take with Camera</Text>
             </TouchableOpacity>
+
             <TouchableOpacity onPress={() => openImage()} style={styles.card}>
               <Image
                 source={require('../assets/document_white.png')}

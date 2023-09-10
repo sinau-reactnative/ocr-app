@@ -9,7 +9,7 @@ import {
   Image,
   StyleSheet,
   Dimensions,
-  Alert,
+  Linking,
   // StatusBar,
   TouchableOpacity,
 } from 'react-native';
@@ -18,13 +18,15 @@ import Voice from '@react-native-voice/voice';
 import Tts from 'react-native-tts';
 import Geolocation from '@react-native-community/geolocation';
 import {authRef, updateEmergency} from '../utils/auth';
+import Notifications from '../utils/Notifications';
+import PushNotification from 'react-native-push-notification';
 
 const DEVICE = Dimensions.get('screen');
 
 const HomeWali = ({route, navigation}) => {
-  const {data} = route.params;
+  const {data: dataParams} = route.params;
 
-  const [isStarted, setIsStarted] = useState(false);
+  const [data, setData] = useState(dataParams);
   const [error, setError] = useState(false);
   const [results, setResults] = useState([]);
 
@@ -43,17 +45,28 @@ const HomeWali = ({route, navigation}) => {
 
   useEffect(() => {
     authRef.doc(data.id).onSnapshot(documentSnapshot => {
-      console.log(documentSnapshot.data.length);
+      setData({id: documentSnapshot.id, ...documentSnapshot.data()});
     });
   }, []);
+
+  useEffect(() => {
+    if (data?.isPanic) {
+      PushNotification.removeAllDeliveredNotifications();
+      PushNotification.localNotification({
+        channelId: 'reminders',
+        title: `🆘 ${data?.fullname?.toUpperCase()} is Panic`,
+        message: 'Please check the map',
+      });
+    }
+  }, [data]);
 
   const toGoogleMap = () => {
     const scheme = Platform.select({
       ios: 'maps://0,0?q=',
       android: 'geo:0,0?q=',
     });
-    const latLng = `${lat},${lng}`;
-    const label = 'Custom Label';
+    const latLng = `${data?.latitude},${data?.longitude}`;
+    const label = data?.fullname;
     const url = Platform.select({
       ios: `${scheme}${label}@${latLng}`,
       android: `${scheme}${latLng}(${label})`,
@@ -99,13 +112,53 @@ const HomeWali = ({route, navigation}) => {
         <View style={[{backgroundColor: 'transparent', marginTop: 20}]}>
           <Text style={styles.text}>Summary</Text>
           <View style={{display: 'flex', flexDirection: 'column'}}>
-            <TouchableOpacity style={styles.card}>
+            <View style={styles.card}>
               <Text style={{fontWeight: 'bold'}}>Nama: {data.fullname}</Text>
               <Text style={{fontWeight: 'bold'}}>Email: {data.email}</Text>
               <Text style={{fontWeight: 'bold'}}>
                 Status: {data?.isPanic ? 'EMERGENCY' : 'NORMAL'}
               </Text>
-            </TouchableOpacity>
+              {data?.isPanic && (
+                <TouchableOpacity onPress={() => toGoogleMap()}>
+                  <Text
+                    style={{
+                      fontWeight: 'bold',
+                      letterSpacing: 2,
+                      paddingTop: 10,
+                      textDecorationLine: 'underline',
+                      color: 'darkred',
+                    }}>
+                    Menuju Lokasi →
+                  </Text>
+                </TouchableOpacity>
+              )}
+            </View>
+            {data?.isPanic && (
+              <TouchableOpacity
+                onPress={() => {
+                  PushNotification.removeAllDeliveredNotifications();
+                  updateEmergency({
+                    id: data.id,
+                    isPanic: false,
+                    latitude: null,
+                    longitude: null,
+                  });
+                }}
+                style={{
+                  backgroundColor: 'darkred',
+                  minWidth: DEVICE.width / 1.1,
+                  minHeight: 40,
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  borderRadius: 10,
+                  marginBottom: 20,
+                }}>
+                <Text style={{fontWeight: 'bold', color: '#fff'}}>
+                  Click here if you already on Location
+                </Text>
+              </TouchableOpacity>
+            )}
           </View>
         </View>
       </View>
