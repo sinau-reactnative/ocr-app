@@ -18,7 +18,8 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 // import Home from './pages/Home';
 // import Result from './pages/Result';
 // import HomeWali from './pages/HomeWali';
-import HomeKopi from './pages/Kopi';
+// import HomeKopi from './pages/Kopi';
+import HomeTPA from './pages/TPA/Home';
 
 const DEVICE = Dimensions.get('window');
 const Stack = createNativeStackNavigator();
@@ -65,8 +66,8 @@ const App = () => {
       <NavigationContainer>
         <Stack.Navigator
           screenOptions={{headerShown: false}}
-          initialRouteName="Kopi">
-          <Stack.Screen name="Kopi" component={HomeKopi} />
+          initialRouteName="TPA">
+          <Stack.Screen name="TPA" component={HomeTPA} />
           {/* <Stack.Screen name="Splash" component={SplashScreen} />
           <Stack.Screen name="SignUp" component={SignUp} />
           <Stack.Screen name="SignIn" component={SignIn} /> */}
