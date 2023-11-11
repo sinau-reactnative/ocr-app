@@ -12,12 +12,13 @@ import {StatusBar, StyleSheet, Dimensions} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
-import SplashScreen from './pages/Splash';
-import SignUp from './pages/SignUp';
-import SignIn from './pages/SignIn';
-import Home from './pages/Home';
-import Result from './pages/Result';
-import HomeWali from './pages/HomeWali';
+// import SplashScreen from './pages/Splash';
+// import SignUp from './pages/SignUp';
+// import SignIn from './pages/SignIn';
+// import Home from './pages/Home';
+// import Result from './pages/Result';
+// import HomeWali from './pages/HomeWali';
+import HomeKopi from './pages/Kopi';
 
 const DEVICE = Dimensions.get('window');
 const Stack = createNativeStackNavigator();
@@ -64,11 +65,12 @@ const App = () => {
       <NavigationContainer>
         <Stack.Navigator
           screenOptions={{headerShown: false}}
-          initialRouteName="Splash">
-          <Stack.Screen name="Splash" component={SplashScreen} />
+          initialRouteName="Kopi">
+          <Stack.Screen name="Kopi" component={HomeKopi} />
+          {/* <Stack.Screen name="Splash" component={SplashScreen} />
           <Stack.Screen name="SignUp" component={SignUp} />
-          <Stack.Screen name="SignIn" component={SignIn} />
-          <Stack.Screen
+          <Stack.Screen name="SignIn" component={SignIn} /> */}
+          {/* <Stack.Screen
             options={{gestureEnabled: false}}
             name="Home"
             component={Home}
@@ -78,7 +80,7 @@ const App = () => {
             name="Result"
             component={Result}
           />
-          <Stack.Screen name="HomeWali" component={HomeWali} />
+          <Stack.Screen name="HomeWali" component={HomeWali} /> */}
         </Stack.Navigator>
       </NavigationContainer>
     </>

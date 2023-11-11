@@ -12,6 +12,7 @@
   "dependencies": {
     "@react-native-community/geolocation": "^3.0.6",
     "@react-native-firebase/app": "^18.1.0",
+    "@react-native-firebase/database": "^18.3.2",
     "@react-native-firebase/firestore": "^18.1.0",
     "@react-native-voice/voice": "^3.2.4",
     "@react-navigation/native": "^6.1.7",
