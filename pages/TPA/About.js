@@ -22,34 +22,34 @@ import moment from 'moment';
 const DEVICE = Dimensions.get('window');
 
 const About = ({setMenu}) => {
-  const tableHead = ['Waktu', 'Titik', 'Suhu (C)', 'CO2 (PPM)', 'Status'];
-  const tableWidth = [110, 40, 55, 70, 130];
+  const tableHead = ['Waktu', 'Nama', 'Suhu (C)', 'Status', 'Hadir'];
+  const tableWidth = [110, 140, 55, 70, 130];
 
   const [data, setData] = useState(null);
 
   useEffect(() => {
     firestore()
       .collection('tahap1')
-      .doc('tpa')
+      .doc('kelas')
       .collection('history')
-      .limit(20)
       .orderBy('createdAt', 'desc')
       .onSnapshot(docSnap => {
         let _data = [];
         docSnap.forEach(doc => {
-          const {createdAt, suhu, co2, status, point} = doc.data();
+          const {createdAt, isAbsence, name, suhu, status} = doc.data();
           _data.push({
             id: doc.id,
             data: [
               moment.unix(createdAt).format('DD/MM/YY HH:mm'),
-              point.toLocaleUpperCase(),
+              name,
               suhu,
-              co2,
               status,
+              isAbsence,
+              "Hadir",
             ],
           });
           if (_data.length === docSnap.size) {
-            setData(_data.sort((a, b) => b.createdAt - a.createdAt));
+            setData(_data);
           }
         });
       });
@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
   },
   buttonLogout: {
     display: 'flex',
-    backgroundColor: '#FEC260',
+    backgroundColor: '#cc5044',
     width: 150,
     height: 40,
     justifyContent: 'center',
@@ -135,10 +135,11 @@ const styles = StyleSheet.create({
   },
   textLogin: {
     fontWeight: 'bold',
+    color: '#fff'
   },
   header: {
     height: 50,
-    backgroundColor: '#FEC260',
+    backgroundColor: '#F9c5b8',
   },
   text: {textAlign: 'center', fontWeight: 'bold', fontSize: 12},
   dataWrapper: {marginTop: -1},

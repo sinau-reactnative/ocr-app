@@ -13,7 +13,7 @@ import {
   View,
   Dimensions,
   TouchableOpacity,
-  ScrollView,
+  Pressable,
   Image,
 } from 'react-native';
 import moment from 'moment';
@@ -24,6 +24,7 @@ const DEVICE = Dimensions.get('window');
 
 const Filter = ({setMenu, role}) => {
   const [data, setData] = useState(null);
+  const [filterMode, setFilterMode] = useState(1);
   const reference = database().ref('/TPA');
 
   useEffect(() => {
@@ -32,10 +33,37 @@ const Filter = ({setMenu, role}) => {
     });
   }, []);
 
+  const resolveData = (filterMode) => {
+    if(filterMode === 1) {
+      return ['filterCo2In1', 'filterCo2Out1']
+    } else if(filterMode === 2) {
+      return ['filterCo2In2', 'filterCo2Out2']
+    } else if(filterMode === 3) {
+      return ['filterCo2In3', 'filterCo2Out3']
+    }
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.titleContainer}>
         <Text style={styles.title}>MONITORING FILTER</Text>
+      </View>
+      <View style={{display: 'flex', flexDirection: 'row', marginBottom: 10}}>
+        <Pressable
+          onPress={() => setFilterMode(1)}
+          style={filterMode === 1 ? styles.buttonActive : styles.buttonNonActive}>
+          <Text>FILTER A</Text>
+        </Pressable>
+        <Pressable
+          onPress={() => setFilterMode(2)}
+          style={filterMode === 2 ? styles.buttonActive : styles.buttonNonActive}>
+          <Text>FILTER B</Text>
+        </Pressable>
+        <Pressable
+          onPress={() => setFilterMode(3)}
+          style={filterMode === 3 ? styles.buttonActive : styles.buttonNonActive}>
+          <Text>FILTER C</Text>
+        </Pressable>
       </View>
       <View style={[styles.card]}>
         <View style={styles.cardLeft}>
@@ -45,7 +73,7 @@ const Filter = ({setMenu, role}) => {
         </View>
         <View style={styles.cardRigth}>
           <Text style={{fontSize: 34, fontWeight: 'bold'}}>
-            {data?.filterCo2In} <Text style={{fontSize: 22}}>PPM</Text>
+            {data?.[resolveData(filterMode)[0]]} <Text style={{fontSize: 22}}>PPM</Text>
           </Text>
         </View>
       </View>
@@ -53,10 +81,10 @@ const Filter = ({setMenu, role}) => {
         style={[
           styles.buttonLogout,
           {width: DEVICE.width / 1.3, marginTop: 30},
-          data?.filterCo2In > 100 && {backgroundColor: '#F29393'},
+          data?.[resolveData(filterMode)[0]] > 100 && {backgroundColor: '#F29393'},
         ]}>
         <Text style={styles.textLogin}>
-          {data?.filterCo2In > 100
+          {data?.[resolveData(filterMode)[0]] > 100
             ? 'TERJADI PROSES FILTER'
             : 'TIDAK ADA PROSES FILTER'}
         </Text>
@@ -69,7 +97,7 @@ const Filter = ({setMenu, role}) => {
         </View>
         <View style={styles.cardRigth}>
           <Text style={{fontSize: 34, fontWeight: 'bold'}}>
-            {data?.filterCo2Out} <Text style={{fontSize: 22}}>PPM</Text>
+            {data?.[resolveData(filterMode)[1]]} <Text style={{fontSize: 22}}>PPM</Text>
           </Text>
         </View>
       </View>
@@ -147,6 +175,18 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: 'bo',
     color: '#293462',
+  },
+  buttonActive: {
+    borderBottomWidth: 1,
+    borderBottomColor: '#FEC260',
+    paddingHorizontal: 12,
+    paddingBottom: 5,
+  },
+  buttonNonActive: {
+    borderBottomWidth: 1,
+    borderBottomColor: 'black',
+    paddingHorizontal: 12,
+    paddingBottom: 5,
   },
 });
 

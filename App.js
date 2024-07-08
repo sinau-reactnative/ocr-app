@@ -62,7 +62,7 @@ const App = () => {
 
   return (
     <>
-      <StatusBar backgroundColor={'#004170'} barStyle="light-content" />
+      <StatusBar backgroundColor={'#f5664e'} barStyle="light-content" />
       <NavigationContainer>
         <Stack.Navigator
           screenOptions={{headerShown: false}}

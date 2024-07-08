@@ -16,52 +16,226 @@ import {
   Dimensions,
   TouchableOpacity,
   Image,
+  ScrollView,
+  Alert,
 } from 'react-native';
-import database from '@react-native-firebase/database';
 
 import About from './About';
 import Notification from './Notification';
 import Filter from './Filter';
-
-import logo from './assets/logo.png';
-import therm from './assets/therm.png';
-import cloud from './assets/cloud.png';
+import firestore from '@react-native-firebase/firestore';
+import logo from './assets/splash.png';
+import axios from 'axios';
 
 const DEVICE = Dimensions.get('window');
 
-const mappingKey = {
-  0: 'A',
-  1: 'B',
-  2: 'C',
-};
+export const userData = [
+  {
+    nim: '1101212023',
+    name: 'FAUZIAH RAMADHANI',
+    suhu: Math.floor(Math.random() * (40 - 30 + 1)) + 30,
+    status: 'Sehat',
+    isAbsence: true,
+  },
+  {
+    nim: '1101212050',
+    name: 'FANY FADILAH IRWAN',
+    suhu: Math.floor(Math.random() * (40 - 30 + 1)) + 30,
+    status: 'Sehat',
+    isAbsence: true,
+  },
+  {
+    nim: '1101214001',
+    name: 'ABIGAIL ARIVIANTI',
+    suhu: Math.floor(Math.random() * (40 - 30 + 1)) + 30,
+    status: 'Sehat',
+    isAbsence: true,
+  },
+  {
+    nim: '1101214003',
+    name: 'NUR AZIZAH',
+    suhu: Math.floor(Math.random() * (40 - 30 + 1)) + 30,
+    status: 'Sehat',
+    isAbsence: true,
+  },
+  {
+    nim: '1101214006',
+    name: 'SURYA DWI PERMANA',
+    suhu: Math.floor(Math.random() * (40 - 30 + 1)) + 30,
+    status: 'Sehat',
+    isAbsence: true,
+  },
+  {
+    nim: '1101214008',
+    name: 'SALSHABILA NATASYA',
+    suhu: Math.floor(Math.random() * (40 - 30 + 1)) + 30,
+    status: 'Sehat',
+    isAbsence: true,
+  },
+  {
+    nim: '1101214009',
+    name: 'VITA PUTRI HANDAYANI',
+    suhu: Math.floor(Math.random() * (40 - 30 + 1)) + 30,
+    status: 'Sehat',
+    isAbsence: true,
+  },
+  {
+    nim: '1101214011',
+    name: 'IQBAL ZUBAIR RAMADHAN',
+    suhu: Math.floor(Math.random() * (40 - 30 + 1)) + 30,
+    status: 'Sehat',
+    isAbsence: true,
+  },
+  {
+    nim: '1101214027',
+    name: 'LAKSAMANA AIDZUL HAQ',
+    suhu: Math.floor(Math.random() * (40 - 30 + 1)) + 30,
+    status: 'Sehat',
+    isAbsence: true,
+  },
+  {
+    nim: '1101214037',
+    name: 'LUKMAN HAKIM',
+    suhu: Math.floor(Math.random() * (40 - 30 + 1)) + 30,
+    status: 'Sehat',
+    isAbsence: true,
+  },
+  {
+    nim: '1101214047',
+    name: 'ERWIN ALFANDI',
+    suhu: Math.floor(Math.random() * (40 - 30 + 1)) + 30,
+    status: 'Sehat',
+    isAbsence: true,
+  },
+  {
+    nim: '1101215002',
+    name: 'NURYUNITA FAUZIAH ARROHMAH',
+    suhu: Math.floor(Math.random() * (40 - 30 + 1)) + 30,
+    status: 'Sehat',
+    isAbsence: true,
+  },
+  {
+    nim: '1101215005',
+    name: 'NATALIA',
+    suhu: Math.floor(Math.random() * (40 - 30 + 1)) + 30,
+    status: 'Sehat',
+    isAbsence: true,
+  },
+  {
+    nim: '1101215007',
+    name: 'SHERFINA SALSABILA',
+    suhu: Math.floor(Math.random() * (40 - 30 + 1)) + 30,
+    status: 'Sehat',
+    isAbsence: true,
+  },
+  {
+    nim: '1101215010',
+    name: 'AISYAH NABILAH HANASEPTYANI',
+    suhu: Math.floor(Math.random() * (40 - 30 + 1)) + 30,
+    status: 'Sehat',
+    isAbsence: true,
+  },
+  {
+    nim: '1101215013',
+    name: 'REFSI INDRA MAULANA',
+    suhu: Math.floor(Math.random() * (40 - 30 + 1)) + 30,
+    status: 'Sehat',
+    isAbsence: true,
+  },
+  {
+    nim: '1101215016',
+    name: 'AJENG SAPUTRI AL HIDAYAH',
+    suhu: Math.floor(Math.random() * (40 - 30 + 1)) + 30,
+    status: 'Sehat',
+    isAbsence: true,
+  },
+  {
+    nim: '1101215019',
+    name: 'DEWI UBUDIAH',
+    suhu: Math.floor(Math.random() * (40 - 30 + 1)) + 30,
+    status: 'Sehat',
+    isAbsence: true,
+  },
+  {
+    nim: '1101215025',
+    name: 'MUHAMMAD MAULANA AKBAR',
+    suhu: Math.floor(Math.random() * (40 - 30 + 1)) + 30,
+    status: 'Sehat',
+    isAbsence: true,
+  },
+  {
+    nim: '1101215031',
+    name: 'ARYA BIMANTARA MAHESA',
+    suhu: Math.floor(Math.random() * (40 - 30 + 1)) + 30,
+    status: 'Sehat',
+    isAbsence: true,
+  },
+];
+
+const sliceString = (string, length) => {
+  if (string.length > length) {
+    return string.slice(0, length) + '...';
+  }
+  return string;
+}
+
 
 const App = () => {
-  const reference = database().ref('/TPA');
 
   const [showSplash, setShowSplash] = useState(true);
   const [menu, setMenu] = useState('nodes');
-  const [data, setData] = useState({});
+  const [data, setData] = useState([]);
 
   useEffect(() => {
-    reference.on('value', snapshot => {
-      setData(snapshot.val());
-    });
+    firestore().collection('tahap1').doc('absensi').collection('user').onSnapshot(docSnap => {
+      let _data = [];
+      docSnap.forEach(doc => {
+        _data.push({
+          id: doc.id,
+          ...doc.data(),
+        });
+        if (_data.length === docSnap.size) {
+          setData(_data);
+        }
+      });
+    })
+
+    firestore().collection('tahap1').doc('absensi').collection('user').doc('1101214001').onSnapshot(docSnap => {
+      console.log(docSnap.data())
+    })
   }, []);
+  
+
+ const reset = async () => {
+    // const request = []
+    // for (const user of userData ) {
+    //   request.push(firestore().collection('tahap1').doc('kelas').collection('user').doc(user.nim).update({ isAbsence: false, suhu: 0}))
+    // }
+    // await Promise.all(request)
+    //  .then(() => {
+    //    Alert.alert('Success', 'Reset success')
+    //  })
+    //  .catch(err => {
+    //    console.log(err)
+    //  })
+    // await fetch(`https://al-quran-8d642.firebaseio.com/data.json?print=pretty`).then(res => res.json()).then(data => {
+    //   console.log('kesini', data)
+    // })
+ }
 
   return (
     <>
-      <StatusBar backgroundColor={'#D36B00'} />
       <SafeAreaView>
         <View style={styles.container}>
           {showSplash ? (
             <View style={styles.splashContainer}>
               <Image source={logo} style={styles.image} />
               <Text style={styles.footerText}>
-                Selamat datang di aplikasi Telemonitoring Suhu dan Kadar
-                Pembakaran Tempat Pembuangan Sampah (TPS) Perum GPA Raya Ngijo
-                Karangploso
+                Selamat datang di aplikasi SafeClass
               </Text>
-              <TouchableOpacity onPress={() => setShowSplash(false)}>
+              <TouchableOpacity
+                style={{marginTop: 20}}
+                onPress={() => setShowSplash(false)}>
                 <View style={styles.buttonLogout}>
                   <Text style={styles.textLogin}>NEXT</Text>
                 </View>
@@ -71,161 +245,39 @@ const App = () => {
             <>
               {menu === 'nodes' ? (
                 <>
-                  <View style={styles.titleContainer}>
-                    <Text style={styles.title}>
-                      {'Realtime Monitoring'.toUpperCase()}
-                    </Text>
-                  </View>
                   <View style={styles.menu}>
-                    <View style={styles.card}>
-                      <View style={styles.cardLeft}>
-                        <Text
-                          style={{
-                            fontSize: 12,
-                            fontWeight: 'bo',
-                            color: '#293462',
-                            marginBottom: 10,
-                          }}>
-                          TEMPERATURE
-                        </Text>
-                        <Image source={therm} style={styles.image2} />
-                      </View>
-                      <View style={styles.cardRigth}>
-                        {Object.keys(data)
-                          .filter(i => !i.search('suhu'))
-                          .map((d, key) => (
-                            <View key={key} style={styles.rowContainer}>
-                              <View style={styles.rowInput2}>
-                                <Text
-                                  style={{fontWeight: 'bold', color: '#fff'}}>
-                                  Point {mappingKey[key]}
-                                </Text>
-                              </View>
-                              <View
-                                style={[
-                                  styles.rowInput,
-                                  {
-                                    backgroundColor:
-                                      data[d] > 60 ? '#FFE898' : '#9ED2C6',
-                                  },
-                                ]}>
-                                <Text
-                                  style={{
-                                    color: '#293462',
-                                    fontWeight: 'bold',
-                                  }}>
-                                  {data[d]} ℃
-                                </Text>
-                              </View>
-                            </View>
-                          ))}
-                        <View style={styles.rowContainer}>
-                          <View
-                            style={[
-                              styles.rowInput,
-                              {width: 150},
-                              {
-                                backgroundColor:
-                                  data.suhuA > 60 ||
-                                  data.suhuB > 60 ||
-                                  data.suhuC > 60
-                                    ? '#FFE898'
-                                    : '#9ED2C6',
-                              },
-                            ]}>
-                            <Text
-                              style={{color: '#293462', fontWeight: 'bold'}}>
-                              {data.suhuA > 60 ||
-                              data.suhuB > 60 ||
-                              data.suhuC > 60
-                                ? 'MEMBAKAR'
-                                : 'TIDAK MEMBAKAR'}
-                            </Text>
+                    <View style={styles.titleContainer}>
+                      <Text style={styles.title}>
+                        {'List Mahasiswa'.toUpperCase()}
+                      </Text>
+                    </View>
+                    <ScrollView>
+                      {data?.map((i, index) => (
+                        <View key={index} style={[styles.card, index % 2 === 0 ? { backgroundColor: '#F9c5b8' } : { backgroundColor: '#Fbe2dd' }]}>
+                          <View>
+                            <Text style={styles.menuText}>{sliceString(i?.name, 17)}</Text>
+                            <Text style={styles.menuText}>{i?.nim}</Text>
+                          </View>
+                          <View style={{width: '40%' }}>
+                            <Text style={styles.subMenu}>Suhu: <Text style={{ fontSize: 12 }}>{i?.suhu}°</Text></Text>
+                            <Text style={styles.subMenu}>Status: <Text style={{ fontSize: 12 }}>{i?.status}</Text></Text>
+                            <Text style={styles.subMenu}>Absensi: <Text style={{ fontSize: 12 }}>{i?.isAbsence ? 'Hadir' : 'Tidak Hadir'}</Text></Text>
                           </View>
                         </View>
-                      </View>
-                    </View>
-                    <View style={[styles.card, {height: DEVICE.height / 2.7}]}>
-                      <View style={styles.cardLeft}>
-                        <Text
-                          style={{
-                            fontSize: 12,
-                            fontWeight: 'bo',
-                            color: '#293462',
-                            marginBottom: 10,
-                          }}>
-                          KADAR CO2
-                        </Text>
-                        <Image source={cloud} style={styles.image2} />
-                      </View>
-                      <View style={styles.cardRigth}>
-                        {Object.keys(data)
-                          .filter(i => !i.search('co'))
-                          .map((d, key) => (
-                            <>
-                              <View key={key} style={styles.rowContainer}>
-                                <View style={styles.rowInput2}>
-                                  <Text
-                                    style={{fontWeight: 'bold', color: '#fff'}}>
-                                    Point {mappingKey[key]}
-                                  </Text>
-                                </View>
-                                <View
-                                  style={[
-                                    styles.rowInput,
-                                    {
-                                      backgroundColor:
-                                        data[d] > 1000 ? '#FF7C7C' : '#9ED2C6',
-                                    },
-                                  ]}>
-                                  <Text
-                                    style={{
-                                      color: '#293462',
-                                      fontWeight: 'bold',
-                                    }}>
-                                    {data[d]} PPM
-                                  </Text>
-                                </View>
-                              </View>
-                              <View
-                                style={[
-                                  styles.rowContainer,
-                                  {paddingBottom: 12},
-                                ]}>
-                                <View
-                                  style={[
-                                    styles.rowInput,
-                                    {width: 150},
-                                    {
-                                      backgroundColor:
-                                        data[d] > 1000 ? '#FF7C7C' : '#9ED2C6',
-                                    },
-                                  ]}>
-                                  <Text
-                                    style={{
-                                      color: '#293462',
-                                      fontWeight: 'bold',
-                                    }}>
-                                    {data[d] > 1000 ? 'TIDAK AMAN' : 'AMAN'}
-                                  </Text>
-                                </View>
-                              </View>
-                            </>
-                          ))}
-                      </View>
-                    </View>
-                  </View>
-                  <View
+                      ))}
+                    </ScrollView>
+                    <View
                     style={[
                       styles.rowContainer,
                       {
                         justifyContent: 'space-between',
-                        width: DEVICE.width / 1.3,
+                        width: 'auto',
+                        paddingTop: 20
                       },
                     ]}>
-                    <TouchableOpacity onPress={() => setMenu('notifikasi')}>
+                    <TouchableOpacity onPress={() => reset()}>
                       <View style={styles.buttonLogout}>
-                        <Text style={styles.textLogin}>NOTIFIKASI</Text>
+                        <Text style={styles.textLogin}>RESET</Text>
                       </View>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => setMenu('history')}>
@@ -234,15 +286,8 @@ const App = () => {
                       </View>
                     </TouchableOpacity>
                   </View>
-                  <TouchableOpacity onPress={() => setMenu('filter')}>
-                    <View
-                      style={[
-                        styles.buttonLogout,
-                        {width: DEVICE.width / 1.3},
-                      ]}>
-                      <Text style={styles.textLogin}>MONITORING FILTER</Text>
-                    </View>
-                  </TouchableOpacity>
+                  </View>
+                 
                   {/* <Notification isShow={showNotification} data={data} oldData={sendData} setShow={() => setShowNotification(false)} /> */}
                 </>
               ) : menu === 'notifikasi' ? (
@@ -274,10 +319,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   menu: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
+    // display: 'flex',
+    // alignItems: 'center',
+    // justifyContent: 'center',
     // marginBottom: 20,
+    padding: 20,
   },
   image: {
     width: DEVICE.width / 1.5,
@@ -326,13 +372,12 @@ const styles = StyleSheet.create({
   },
   buttonLogout: {
     display: 'flex',
-    backgroundColor: '#FEC260',
+    backgroundColor: '#cc5044',
     width: 150,
     height: 40,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 5,
-    marginTop: 10,
   },
   footerText: {
     fontSize: 17,
@@ -343,17 +388,19 @@ const styles = StyleSheet.create({
   },
   textLogin: {
     fontWeight: 'bold',
+    color: '#fff',
   },
   card: {
     backgroundColor: '#fff',
     borderRadius: 3,
-    width: DEVICE.width / 1.3,
-    height: DEVICE.width / 2.1,
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
     flexDirection: 'row',
     marginBottom: 5,
+    padding: 10,
+    width: DEVICE.width / 1.2,
+    height: DEVICE.height / 9,
   },
   cardLeft: {
     display: 'flex',
@@ -393,6 +440,9 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 3,
     borderBottomLeftRadius: 3,
   },
+  subMenu: {
+    fontWeight: 'bold'
+  }
 });
 
 export default App;
