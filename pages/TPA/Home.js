@@ -9,7 +9,6 @@
 import React, {useEffect, useState} from 'react';
 import {
   SafeAreaView,
-  StatusBar,
   StyleSheet,
   Text,
   View,
@@ -17,7 +16,6 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
-  Alert,
 } from 'react-native';
 
 import About from './About';
@@ -25,152 +23,8 @@ import Notification from './Notification';
 import Filter from './Filter';
 import firestore from '@react-native-firebase/firestore';
 import logo from './assets/splash.png';
-import axios from 'axios';
 
 const DEVICE = Dimensions.get('window');
-
-export const userData = [
-  {
-    nim: '1101212023',
-    name: 'FAUZIAH RAMADHANI',
-    suhu: Math.floor(Math.random() * (40 - 30 + 1)) + 30,
-    status: 'Sehat',
-    isAbsence: true,
-  },
-  {
-    nim: '1101212050',
-    name: 'FANY FADILAH IRWAN',
-    suhu: Math.floor(Math.random() * (40 - 30 + 1)) + 30,
-    status: 'Sehat',
-    isAbsence: true,
-  },
-  {
-    nim: '1101214001',
-    name: 'ABIGAIL ARIVIANTI',
-    suhu: Math.floor(Math.random() * (40 - 30 + 1)) + 30,
-    status: 'Sehat',
-    isAbsence: true,
-  },
-  {
-    nim: '1101214003',
-    name: 'NUR AZIZAH',
-    suhu: Math.floor(Math.random() * (40 - 30 + 1)) + 30,
-    status: 'Sehat',
-    isAbsence: true,
-  },
-  {
-    nim: '1101214006',
-    name: 'SURYA DWI PERMANA',
-    suhu: Math.floor(Math.random() * (40 - 30 + 1)) + 30,
-    status: 'Sehat',
-    isAbsence: true,
-  },
-  {
-    nim: '1101214008',
-    name: 'SALSHABILA NATASYA',
-    suhu: Math.floor(Math.random() * (40 - 30 + 1)) + 30,
-    status: 'Sehat',
-    isAbsence: true,
-  },
-  {
-    nim: '1101214009',
-    name: 'VITA PUTRI HANDAYANI',
-    suhu: Math.floor(Math.random() * (40 - 30 + 1)) + 30,
-    status: 'Sehat',
-    isAbsence: true,
-  },
-  {
-    nim: '1101214011',
-    name: 'IQBAL ZUBAIR RAMADHAN',
-    suhu: Math.floor(Math.random() * (40 - 30 + 1)) + 30,
-    status: 'Sehat',
-    isAbsence: true,
-  },
-  {
-    nim: '1101214027',
-    name: 'LAKSAMANA AIDZUL HAQ',
-    suhu: Math.floor(Math.random() * (40 - 30 + 1)) + 30,
-    status: 'Sehat',
-    isAbsence: true,
-  },
-  {
-    nim: '1101214037',
-    name: 'LUKMAN HAKIM',
-    suhu: Math.floor(Math.random() * (40 - 30 + 1)) + 30,
-    status: 'Sehat',
-    isAbsence: true,
-  },
-  {
-    nim: '1101214047',
-    name: 'ERWIN ALFANDI',
-    suhu: Math.floor(Math.random() * (40 - 30 + 1)) + 30,
-    status: 'Sehat',
-    isAbsence: true,
-  },
-  {
-    nim: '1101215002',
-    name: 'NURYUNITA FAUZIAH ARROHMAH',
-    suhu: Math.floor(Math.random() * (40 - 30 + 1)) + 30,
-    status: 'Sehat',
-    isAbsence: true,
-  },
-  {
-    nim: '1101215005',
-    name: 'NATALIA',
-    suhu: Math.floor(Math.random() * (40 - 30 + 1)) + 30,
-    status: 'Sehat',
-    isAbsence: true,
-  },
-  {
-    nim: '1101215007',
-    name: 'SHERFINA SALSABILA',
-    suhu: Math.floor(Math.random() * (40 - 30 + 1)) + 30,
-    status: 'Sehat',
-    isAbsence: true,
-  },
-  {
-    nim: '1101215010',
-    name: 'AISYAH NABILAH HANASEPTYANI',
-    suhu: Math.floor(Math.random() * (40 - 30 + 1)) + 30,
-    status: 'Sehat',
-    isAbsence: true,
-  },
-  {
-    nim: '1101215013',
-    name: 'REFSI INDRA MAULANA',
-    suhu: Math.floor(Math.random() * (40 - 30 + 1)) + 30,
-    status: 'Sehat',
-    isAbsence: true,
-  },
-  {
-    nim: '1101215016',
-    name: 'AJENG SAPUTRI AL HIDAYAH',
-    suhu: Math.floor(Math.random() * (40 - 30 + 1)) + 30,
-    status: 'Sehat',
-    isAbsence: true,
-  },
-  {
-    nim: '1101215019',
-    name: 'DEWI UBUDIAH',
-    suhu: Math.floor(Math.random() * (40 - 30 + 1)) + 30,
-    status: 'Sehat',
-    isAbsence: true,
-  },
-  {
-    nim: '1101215025',
-    name: 'MUHAMMAD MAULANA AKBAR',
-    suhu: Math.floor(Math.random() * (40 - 30 + 1)) + 30,
-    status: 'Sehat',
-    isAbsence: true,
-  },
-  {
-    nim: '1101215031',
-    name: 'ARYA BIMANTARA MAHESA',
-    suhu: Math.floor(Math.random() * (40 - 30 + 1)) + 30,
-    status: 'Sehat',
-    isAbsence: true,
-  },
-];
 
 const sliceString = (string, length) => {
   if (string.length > length) {
@@ -200,27 +54,13 @@ const App = () => {
       });
     })
 
-    firestore().collection('tahap1').doc('absensi').collection('user').doc('1101214001').onSnapshot(docSnap => {
-      console.log(docSnap.data())
-    })
   }, []);
   
 
  const reset = async () => {
-    // const request = []
-    // for (const user of userData ) {
-    //   request.push(firestore().collection('tahap1').doc('kelas').collection('user').doc(user.nim).update({ isAbsence: false, suhu: 0}))
-    // }
-    // await Promise.all(request)
-    //  .then(() => {
-    //    Alert.alert('Success', 'Reset success')
-    //  })
-    //  .catch(err => {
-    //    console.log(err)
-    //  })
-    // await fetch(`https://al-quran-8d642.firebaseio.com/data.json?print=pretty`).then(res => res.json()).then(data => {
-    //   console.log('kesini', data)
-    // })
+    await fetch(`https://skripsi-api-azerino-yogananta-gatot-ss-projects.vercel.app/api/v1/kelas/reset`).then(res => res.json()).then(data => {
+      console.log('kesini', data)
+    })
  }
 
   return (

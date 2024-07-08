@@ -30,7 +30,7 @@ const About = ({setMenu}) => {
   useEffect(() => {
     firestore()
       .collection('tahap1')
-      .doc('kelas')
+      .doc('absensi')
       .collection('history')
       .orderBy('createdAt', 'desc')
       .onSnapshot(docSnap => {
@@ -44,8 +44,7 @@ const About = ({setMenu}) => {
               name,
               suhu,
               status,
-              isAbsence,
-              "Hadir",
+              isAbsence ? "Hadir" : "Tidak Hadir",
             ],
           });
           if (_data.length === docSnap.size) {
