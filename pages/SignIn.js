@@ -7,6 +7,7 @@ import {
   Dimensions,
   TextInput,
   Alert,
+  Image,
 } from 'react-native';
 import {login} from '../utils/auth';
 
@@ -30,7 +31,6 @@ const initForm = {
 const SignIn = ({navigation}) => {
   const [form, setForm] = useState(initForm);
   const [isLoading, setIsLoading] = useState(false);
-  const [isUser, setIsUser] = useState(true);
 
   const handleLogin = async () => {
     setIsLoading(true);
@@ -49,21 +49,23 @@ const SignIn = ({navigation}) => {
 
     setIsLoading(false);
     setForm(initForm);
-    if (isUser) {
-      navigation.navigate('Home', {data: res.data});
-    } else {
-      navigation.navigate('HomeWali', {data: res.data});
-    }
+    navigation.navigate('Home', {data: res.data});
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Welcome Onboard!</Text>
-      <Text style={styles.subtitle}>Please enter your email and password</Text>
+      <Text style={styles.title}>Selamat Datang di</Text>
+      <Text style={[styles.title, {fontSize: 30}]}>SPARKA</Text>
+      <Image
+        source={require('../assets/sparka.jpeg')}
+        style={{
+          height: DEVICE.height / 2.5,
+          objectFit: 'contain',
+        }}
+      />
       {inputList.map((i, key) => {
         return (
           <View key={(key + 3).toString()}>
-            <Text style={styles.intputTitle}>{i.title}</Text>
             <TextInput
               style={styles.input}
               placeholder={i.placeholder}
@@ -74,33 +76,9 @@ const SignIn = ({navigation}) => {
           </View>
         );
       })}
-      <View style={styles.radioRow}>
-        <View style={styles.radioContainer}>
-          <TouchableOpacity
-            onPress={() => setIsUser(true)}
-            style={styles.radioButton}>
-            {isUser ? <View style={styles.selected} /> : <View />}
-          </TouchableOpacity>
-          <Text style={[styles.textButton, {paddingLeft: 10}]}>User</Text>
-        </View>
-        <View style={styles.radioContainer}>
-          <TouchableOpacity
-            onPress={() => setIsUser(false)}
-            style={styles.radioButton}>
-            {!isUser ? <View style={styles.selected} /> : <View />}
-          </TouchableOpacity>
-          <Text style={[styles.textButton, {paddingLeft: 10}]}>Non User</Text>
-        </View>
-      </View>
       <TouchableOpacity onPress={() => handleLogin()} style={styles.button}>
         <Text style={styles.textButton}>
           {isLoading ? 'LOADING' : 'SIGN IN'}
-        </Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
-        <Text style={styles.alreadyHave}>
-          Don't have an account?
-          <Text style={{color: 'red'}}> Sign Up</Text>
         </Text>
       </TouchableOpacity>
     </View>
@@ -111,27 +89,25 @@ export default SignIn;
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#004170',
+    backgroundColor: '#fff',
     display: 'flex',
-    minHeight: DEVICE.height,
   },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    marginTop: 30,
-    color: '#fff',
+    color: '#432C81',
   },
-  subtitle: {fontSize: 12, marginTop: 15, color: '#fff', marginBottom: 20},
   button: {
-    backgroundColor: '#69C9EF',
+    backgroundColor: '#432C81',
     paddingVertical: 14,
     marginTop: 40,
     marginHorizontal: 20,
-    borderRadius: 20,
+    borderRadius: 5,
     elevation: 2,
-    width: DEVICE.width / 1.2,
+    width: DEVICE.width / 1.3,
   },
   textButton: {
     color: '#FFF',
@@ -140,12 +116,16 @@ const styles = StyleSheet.create({
   },
   input: {
     backgroundColor: '#fff',
-    width: DEVICE.width / 1.5,
+    width: DEVICE.width / 1.3,
     borderRadius: 5,
     padding: 5,
     paddingHorizontal: 10,
     fontWeight: 'bold',
     fontSize: 13,
+    borderColor: '#EDECF4',
+    borderWidth: 1,
+    margin: 5,
+    color: '#432C81',
   },
   intputTitle: {
     alignSelf: 'flex-start',
@@ -153,38 +133,5 @@ const styles = StyleSheet.create({
     paddingBottom: 5,
     fontWeight: 'bold',
     marginTop: 15,
-  },
-  alreadyHave: {
-    fontWeight: '400',
-    paddingTop: 10,
-    color: '#fff',
-  },
-  radioRow: {
-    display: 'flex',
-    flexDirection: 'row',
-    marginVertical: 20,
-    minWidth: DEVICE.width / 2,
-    justifyContent: 'space-between',
-  },
-  radioContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  radioButton: {
-    height: 24,
-    width: 24,
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  selected: {
-    height: 12,
-    width: 12,
-    borderRadius: 6,
-    backgroundColor: '#fff',
   },
 });

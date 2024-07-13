@@ -7,67 +7,36 @@
  */
 
 import React from 'react';
-import {StatusBar, StyleSheet, Dimensions} from 'react-native';
-// import database from '@react-native-firebase/database';
+import {StatusBar} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
-// import SplashScreen from './pages/Splash';
-// import SignUp from './pages/SignUp';
-// import SignIn from './pages/SignIn';
-// import Home from './pages/Home';
-// import Result from './pages/Result';
-// import HomeWali from './pages/HomeWali';
-// import HomeKopi from './pages/Kopi';
-import HomeTPA from './pages/TPA/Home';
+import SignIn from './pages/SignIn';
+import Home from './pages/Home';
+import Detail from './pages/Detail';
 
-const DEVICE = Dimensions.get('window');
 const Stack = createNativeStackNavigator();
 
 const App = () => {
-  // const reference = database().ref('/apel');
-  // const handleChangePage = from => {
-  //   setSrc(from);
-  //   setMenu('about');
-  // };
-
-  // const handlePress = () => {
-  //   if (!isEditMode) {
-  //     reference.update({
-  //       inputApelBagus: data.inputApelBagus,
-  //       inputApelBiasa: data.inputApelBiasa,
-  //     });
-  //   }
-
-  //   setIsEditMode(!isEditMode);
-  // };
-
-  // const handleChangeInput = (name, value) => {
-  //   setData({...data, [name]: value});
-  // };
-
-  // const handleStart = () => {
-  //   reference.update({start: data.start === 1 ? 0 : 1});
-  // };
-
-  // const handleReset = () => {
-  //   reference.update({
-  //     inputApelBagus: 0,
-  //     inputApelBiasa: 0,
-  //     resultApelBagus: 0,
-  //     resultApelBiasa: 0,
-  //     start: 0,
-  //   });
-  // };
-
   return (
     <>
-      <StatusBar backgroundColor={'#f5664e'} barStyle="light-content" />
+      <StatusBar backgroundColor={'#fff'} barStyle="light-content" />
       <NavigationContainer>
         <Stack.Navigator
           screenOptions={{headerShown: false}}
-          initialRouteName="TPA">
-          <Stack.Screen name="TPA" component={HomeTPA} />
+          initialRouteName="SignIn">
+          <Stack.Screen name="SignIn" component={SignIn} />
+          <Stack.Screen
+            options={{gestureEnabled: false}}
+            name="Home"
+            component={Home}
+          />
+           <Stack.Screen
+            options={{gestureEnabled: false}}
+            name="Detail"
+            component={Detail}
+          />
+          {/* <Stack.Screen name="TPA" component={HomeTPA} /> */}
           {/* <Stack.Screen name="Splash" component={SplashScreen} />
           <Stack.Screen name="SignUp" component={SignUp} />
           <Stack.Screen name="SignIn" component={SignIn} /> */}
@@ -87,17 +56,5 @@ const App = () => {
     </>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    display: 'flex',
-    width: DEVICE.width,
-    height: DEVICE.height,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#f7f7f7',
-    padding: 30,
-  },
-});
 
 export default App;

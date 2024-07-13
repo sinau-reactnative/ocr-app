@@ -2,27 +2,27 @@ import firestore from '@react-native-firebase/firestore';
 import moment from 'moment';
 
 export const authRef = firestore()
-  .collection('tahap1')
-  .doc('ocrapp')
-  .collection('users');
+  .collection('pkm')
+  .doc('sparka')
+  .collection('admin');
 
 export const login = async data => {
   const {email, password} = data;
-  let userData = [];
+  let adminDatas = [];
 
   await authRef
     .where('email', '==', email)
     .get()
     .then(docSnapshot => {
-      docSnapshot.forEach(doc => userData.push({...doc.data(), id: doc.id}));
+      docSnapshot.forEach(doc => adminDatas.push({...doc.data(), id: doc.id}));
     })
     .catch(err => console.log('kesini emang?'));
 
-  if (userData.length > 0) {
-    if (userData[0].password !== password) {
+  if (adminDatas.length > 0) {
+    if (adminDatas[0].password !== password) {
       return {error: true, msg: 'Password Tidak Sama', data: []};
     } else {
-      return {error: false, msg: 'Oke', data: userData[0]};
+      return {error: false, msg: 'Oke', data: adminDatas[0]};
     }
   } else {
     return {error: true, msg: 'Email tidak ditemukan', data: []};
