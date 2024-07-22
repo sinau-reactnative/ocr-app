@@ -78,6 +78,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     backgroundColor: '#fff',
+    paddingBottom: 24
   },
   mainCard: {
     backgroundColor: '#EDECF4',

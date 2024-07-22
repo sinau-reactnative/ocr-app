@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import firestore from '@react-native-firebase/firestore';
-import {View, Text, StyleSheet, Dimensions} from 'react-native';
+import {View, Text, StyleSheet, Dimensions, ScrollView} from 'react-native';
 
 const DEVICE = Dimensions.get('screen');
 
@@ -11,7 +11,7 @@ const Detail = ({route}) => {
     switch (status) {
       case 1:
         return {
-          status: 'Aman',
+          status: 'Normal',
           notifikasi: 'Kesehatan paru paru dalam keadaan sehat',
         };
       case 2:
@@ -22,7 +22,19 @@ const Detail = ({route}) => {
         };
       case 3:
         return {
-          status: 'Sesak Nafas',
+          status: 'Sesak Nafas Ringan',
+          notifikasi:
+            'Kesehatan paru paru dalam kondisi kurang sehat segera periksa kedokter spesialis paru paru',
+        };
+      case 4:
+        return {
+          status: 'Sesak Nafas PPOK',
+          notifikasi:
+            'Kesehatan paru paru dalam kondisi tidak sehat dan  masuk dalam kategori dugaan ppok. Segera periksa kedokter spesialis paru paru',
+        };
+      case 5:
+        return {
+          status: 'Sesak Nafas Kronis',
           notifikasi:
             'Kesehatan paru paru dalam kondisi tidak sehat dan  masuk dalam kategori dugaan ppok. Segera periksa kedokter spesialis paru paru',
         };
@@ -35,66 +47,103 @@ const Detail = ({route}) => {
   };
 
   useEffect(() => {
-    firestore().collection('pkm').doc('sparka').collection('user').doc(data?.id).onSnapshot(docSnap => {
-      setData(docSnap.data());
-    })
+    firestore()
+      .collection('pkm')
+      .doc('sparka')
+      .collection('user')
+      .doc(data?.id)
+      .onSnapshot(docSnap => {
+        const {FEV1, FVC, FEV1_MAX, CO} = docSnap.data();
+        const FEV1_FVC = (FEV1 / FVC) * 100;
+        let finalStatus;
+
+        if (FEV1_FVC >= 70 && CO <= 6 && FEV1 >= FEV1_MAX) {
+          finalStatus = 1;
+        } else if ((FEV1_FVC < 70 && FEV1_FVC >= 50 && CO <= 6 && FEV1 >= FEV1_MAX) || (FEV1_FVC >= 70 && CO <= 6 && FEV1 < FEV1_MAX)) {
+          finalStatus = 2;
+	      } else if (FEV1_FVC < 70 && FEV1_FVC >= 50 && CO <= 6 && FEV1 < FEV1_MAX) {
+          finalStatus = 3;
+        } else if (FEV1_FVC < 50 && CO <= 6 && FEV1 < FEV1_MAX) {
+          finalStatus = 4;
+        } else if (FEV1_FVC < 50 && CO > 6 && FEV1 < FEV1_MAX) {
+          finalStatus = 5;
+        }
+
+        setData({...docSnap.data(), FEV1_FVC, finalStatus});
+      });
   }, []);
 
+  console.log(data);
+
   return (
-    <View style={styles.container}>
-      <View style={styles.titleContainer}>
-        <Text style={styles.title}>{data?.name}</Text>
-      </View>
-      <View style={styles.card}>
-        <View style={styles.row}>
-          <Text style={styles.cardtitle}>Usia: {data?.age} Tahun</Text>
-          <Text style={styles.cardtitle}>Tinggi Badan: {data?.height} cm</Text>
+    <ScrollView>
+      <View style={styles.container}>
+        <View style={styles.titleContainer}>
+          <Text style={styles.title}>{data?.name}</Text>
         </View>
-        <View style={styles.row}>
-          <Text style={styles.cardtitle}>Gender: {data?.gender}</Text>
-          <Text style={styles.cardtitle}>Berat Badan: {data?.weight} kg</Text>
-        </View>
-      </View>
-      <View style={styles.mainContainer}>
-        <Text style={styles.mainCardtitle}>Data Monitoring</Text>
-        <View style={styles.column}>
-          <Text style={styles.mainCardText}>FEV1</Text>
-          <View style={styles.valueContainer}>
-            <Text style={styles.valueText}>
-              {data?.FEV1} <Text style={styles.unit}>lt/m</Text>
+        <View style={styles.card}>
+          <View style={styles.row}>
+            <Text style={styles.cardtitle}>Usia: {data?.age} Tahun</Text>
+            <Text style={styles.cardtitle}>
+              Tinggi Badan: {data?.height} cm
             </Text>
           </View>
-        </View>
-        <View style={styles.column}>
-          <Text style={styles.mainCardText}>FVC</Text>
-          <View style={styles.valueContainer}>
-            <Text style={styles.valueText}>
-              {data?.FVC} <Text style={styles.unit}>lt/m</Text>
-            </Text>
+          <View style={styles.row}>
+            <Text style={styles.cardtitle}>Gender: {data?.gender}</Text>
+            <Text style={styles.cardtitle}>Berat Badan: {data?.weight} kg</Text>
           </View>
         </View>
-        <View style={styles.column}>
-          <Text style={styles.mainCardText}>CO</Text>
-          <View style={styles.valueContainer}>
-            <Text style={styles.valueText}>
-              {data?.CO} <Text style={styles.unit}>ppm</Text>
-            </Text>
+
+        <View style={styles.mainContainer}>
+          <Text style={styles.mainCardtitle}>Data Monitoring</Text>
+          <View style={styles.column}>
+            <Text style={styles.mainCardText}>FEV1</Text>
+            <View style={styles.valueContainer}>
+              <Text style={styles.valueText}>
+                {data?.FEV1} <Text style={styles.unit}>lt/m</Text>
+              </Text>
+            </View>
+          </View>
+          <View style={styles.column}>
+            <Text style={styles.mainCardText}>FVC</Text>
+            <View style={styles.valueContainer}>
+              <Text style={styles.valueText}>
+                {data?.FVC} <Text style={styles.unit}>lt/m</Text>
+              </Text>
+            </View>
+          </View>
+          <View style={styles.column}>
+            <Text style={styles.mainCardText}>CO</Text>
+            <View style={styles.valueContainer}>
+              <Text style={styles.valueText}>
+                {data?.CO} <Text style={styles.unit}>ppm</Text>
+              </Text>
+            </View>
+          </View>
+          <View style={styles.column}>
+            <Text style={styles.mainCardText}>FEV1 / FEC</Text>
+            <View style={styles.valueContainer}>
+              <Text style={styles.valueText}>
+                {data?.FEV1_FVC?.toFixed(2)} <Text style={styles.unit}>%</Text>
+              </Text>
+            </View>
           </View>
         </View>
+        <View style={styles.card}>
+          <Text style={styles.cardtitle}>Status POK:</Text>
+          <Text style={styles.cardValue}>
+            {mappingStatus(data?.finalStatus).status}
+          </Text>
+        </View>
+        <View
+          style={[styles.card, {marginTop: 12, height: DEVICE.height / 8.5}]}>
+          <Text style={styles.cardtitle}>Notifikasi:</Text>
+          <Text style={[styles.cardValue, {fontSize: 13}]}>
+            {mappingStatus(data?.finalStatus).notifikasi}
+          </Text>
+        </View>
       </View>
-      <View style={styles.card}>
-        <Text style={styles.cardtitle}>Status POK:</Text>
-        <Text style={styles.cardValue}>
-          {mappingStatus(data?.status).status}
-        </Text>
-      </View>
-      <View style={[styles.card, {marginTop: 12, height: DEVICE.height / 8.5}]}>
-        <Text style={styles.cardtitle}>Notifikasi:</Text>
-        <Text style={[styles.cardValue, {fontSize: 13}]}>
-          {mappingStatus(data?.status).notifikasi}
-        </Text>
-      </View>
-    </View>
+    </ScrollView>
   );
 };
 
@@ -105,6 +154,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     backgroundColor: '#fff',
+    paddingBottom: 20,
   },
   titleContainer: {
     width: DEVICE.width / 1.1,
