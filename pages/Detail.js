@@ -1,10 +1,18 @@
 import React, {useEffect, useState} from 'react';
 import firestore from '@react-native-firebase/firestore';
-import {View, Text, StyleSheet, Dimensions, ScrollView} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Dimensions,
+  ScrollView,
+  Touchable,
+  TouchableOpacity,
+} from 'react-native';
 
 const DEVICE = Dimensions.get('screen');
 
-const Detail = ({route}) => {
+const Detail = ({route, navigation}) => {
   const [data, setData] = useState(route.params.data);
 
   const mappingStatus = status => {
@@ -59,9 +67,17 @@ const Detail = ({route}) => {
 
         if (FEV1_FVC >= 70 && CO <= 6 && FEV1 >= FEV1_MAX) {
           finalStatus = 1;
-        } else if ((FEV1_FVC < 70 && FEV1_FVC >= 50 && CO <= 6 && FEV1 >= FEV1_MAX) || (FEV1_FVC >= 70 && CO <= 6 && FEV1 < FEV1_MAX)) {
+        } else if (
+          (FEV1_FVC < 70 && FEV1_FVC >= 50 && CO <= 6 && FEV1 >= FEV1_MAX) ||
+          (FEV1_FVC >= 70 && CO <= 6 && FEV1 < FEV1_MAX)
+        ) {
           finalStatus = 2;
-	      } else if (FEV1_FVC < 70 && FEV1_FVC >= 50 && CO <= 6 && FEV1 < FEV1_MAX) {
+        } else if (
+          FEV1_FVC < 70 &&
+          FEV1_FVC >= 50 &&
+          CO <= 6 &&
+          FEV1 < FEV1_MAX
+        ) {
           finalStatus = 3;
         } else if (FEV1_FVC < 50 && CO <= 6 && FEV1 < FEV1_MAX) {
           finalStatus = 4;
@@ -69,81 +85,92 @@ const Detail = ({route}) => {
           finalStatus = 5;
         }
 
+        console.log('detail - finalStatus: ', finalStatus);
+
         setData({...docSnap.data(), FEV1_FVC, finalStatus});
       });
   }, []);
 
-  console.log(data);
-
   return (
-    <ScrollView>
-      <View style={styles.container}>
-        <View style={styles.titleContainer}>
-          <Text style={styles.title}>{data?.name}</Text>
+    <View style={styles.container}>
+      <View style={styles.titleContainer}>
+        <Text style={styles.title}>{data?.name}</Text>
+      </View>
+      <View style={styles.card}>
+        <View style={styles.row}>
+          <Text style={styles.cardtitle}>Usia: {data?.age} Tahun</Text>
+          <Text style={styles.cardtitle}>Tinggi Badan: {data?.height} cm</Text>
         </View>
-        <View style={styles.card}>
-          <View style={styles.row}>
-            <Text style={styles.cardtitle}>Usia: {data?.age} Tahun</Text>
-            <Text style={styles.cardtitle}>
-              Tinggi Badan: {data?.height} cm
+        <View style={styles.row}>
+          <Text style={styles.cardtitle}>Gender: {data?.gender}</Text>
+          <Text style={styles.cardtitle}>Berat Badan: {data?.weight} kg</Text>
+        </View>
+      </View>
+
+      <View style={styles.mainContainer}>
+        <Text style={styles.mainCardtitle}>Data Monitoring</Text>
+        <View style={styles.column}>
+          <Text style={styles.mainCardText}>FEV1</Text>
+          <View style={styles.valueContainer}>
+            <Text style={styles.valueText}>
+              {data?.FEV1} <Text style={styles.unit}>lt/m</Text>
             </Text>
           </View>
-          <View style={styles.row}>
-            <Text style={styles.cardtitle}>Gender: {data?.gender}</Text>
-            <Text style={styles.cardtitle}>Berat Badan: {data?.weight} kg</Text>
+        </View>
+        <View style={styles.column}>
+          <Text style={styles.mainCardText}>FVC</Text>
+          <View style={styles.valueContainer}>
+            <Text style={styles.valueText}>
+              {data?.FVC} <Text style={styles.unit}>lt/m</Text>
+            </Text>
           </View>
         </View>
-
-        <View style={styles.mainContainer}>
-          <Text style={styles.mainCardtitle}>Data Monitoring</Text>
-          <View style={styles.column}>
-            <Text style={styles.mainCardText}>FEV1</Text>
-            <View style={styles.valueContainer}>
-              <Text style={styles.valueText}>
-                {data?.FEV1} <Text style={styles.unit}>lt/m</Text>
-              </Text>
-            </View>
-          </View>
-          <View style={styles.column}>
-            <Text style={styles.mainCardText}>FVC</Text>
-            <View style={styles.valueContainer}>
-              <Text style={styles.valueText}>
-                {data?.FVC} <Text style={styles.unit}>lt/m</Text>
-              </Text>
-            </View>
-          </View>
-          <View style={styles.column}>
-            <Text style={styles.mainCardText}>CO</Text>
-            <View style={styles.valueContainer}>
-              <Text style={styles.valueText}>
-                {data?.CO} <Text style={styles.unit}>ppm</Text>
-              </Text>
-            </View>
-          </View>
-          <View style={styles.column}>
-            <Text style={styles.mainCardText}>FEV1 / FEC</Text>
-            <View style={styles.valueContainer}>
-              <Text style={styles.valueText}>
-                {data?.FEV1_FVC?.toFixed(2)} <Text style={styles.unit}>%</Text>
-              </Text>
-            </View>
+        <View style={styles.column}>
+          <Text style={styles.mainCardText}>CO</Text>
+          <View style={styles.valueContainer}>
+            <Text style={styles.valueText}>
+              {data?.CO} <Text style={styles.unit}>ppm</Text>
+            </Text>
           </View>
         </View>
-        <View style={styles.card}>
-          <Text style={styles.cardtitle}>Status POK:</Text>
-          <Text style={styles.cardValue}>
-            {mappingStatus(data?.finalStatus).status}
-          </Text>
+        <View style={styles.column}>
+          <Text style={styles.mainCardText}>FEV1 / FEC</Text>
+          <View style={styles.valueContainer}>
+            <Text style={styles.valueText}>
+              {data?.FEV1_FVC?.toFixed(2)} <Text style={styles.unit}>%</Text>
+            </Text>
+          </View>
         </View>
-        <View
+      </View>
+      <View style={styles.card}>
+        <Text style={styles.cardtitle}>Status POK:</Text>
+        <Text style={styles.cardValue}>
+          {mappingStatus(data?.finalStatus).status}
+        </Text>
+      </View>
+      <View
+        style={styles.historyButtonContainer}>
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate('History', {data: route.params.data})
+          }
+          style={styles.historyButton}>
+          <Text style={styles.historyText}>history</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('Notifikasi', {data: route.params.data})}
+          style={styles.historyButton}>
+          <Text style={styles.historyText}>notifikasi</Text>
+        </TouchableOpacity>
+      </View>
+      {/* <View
           style={[styles.card, {marginTop: 12, height: DEVICE.height / 8.5}]}>
           <Text style={styles.cardtitle}>Notifikasi:</Text>
           <Text style={[styles.cardValue, {fontSize: 13}]}>
-            {mappingStatus(data?.finalStatus).notifikasi}
+            {mappingStatus(data?.finalStatus).notifikasi}  →
           </Text>
-        </View>
-      </View>
-    </ScrollView>
+        </View> */}
+    </View>
   );
 };
 
@@ -158,6 +185,9 @@ const styles = StyleSheet.create({
   },
   titleContainer: {
     width: DEVICE.width / 1.1,
+    display: 'flex',
+    justifyContent: 'space-between',
+    flexDirection: 'row',
   },
   card: {
     backgroundColor: '#EDECF4',
@@ -229,5 +259,30 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: 'bold',
     color: '#fff',
+  },
+  historyText: {
+    fontSize: 15,
+    color: '#fff',
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
+  },
+  historyButton: {
+    alignSelf: 'center',
+    display: 'flex',
+    backgroundColor: '#432C81',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    paddingVertical: 3,
+    width: DEVICE.width / 1.1 / 2.1,
+    marginVertical: 2,
+  },
+  historyButtonContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: DEVICE.width / 1.1,
+    marginTop: 12
   },
 });
