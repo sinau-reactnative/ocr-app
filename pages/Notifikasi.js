@@ -103,7 +103,7 @@ const Notifikasi = ({route}) => {
 
           datas.push({
             id: doc.id,
-
+            createdAt,
             tgl: moment.unix(createdAt).format('DD/MM/YYYY HH:mm'),
             name,
             FEV1,
@@ -112,7 +112,7 @@ const Notifikasi = ({route}) => {
             finalStatus,
           });
           if (datas.length === docSnap.size) {
-            setData(datas);
+            setData(datas.sort((a, b) => b.createdAt - a.createdAt));
           }
         });
 

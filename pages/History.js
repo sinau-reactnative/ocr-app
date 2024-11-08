@@ -78,9 +78,10 @@ const History = ({route, navigation}) => {
               CO,
               finalStatus,
             ],
+            createdAt,
           });
           if (datas.length === docSnap.size) {
-            setData(datas);
+            setData(datas.sort((a, b) => b.createdAt - a.createdAt));
           }
         });
 
